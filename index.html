@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ORN Van Fleet Economics — Mercedes V-Class Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#000000; color:#ffffff; font-family:'Inter',sans-serif; line-height:1.55; }
+  .strip { background:#000000; border-bottom:1px solid rgba(255,255,255,0.15); padding:22px 40px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+  .wordmark { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:26px; letter-spacing:4px; }
+  .wordmark span { color:#f5b942; }
+  .strip .tag { font-family:'DM Mono',monospace; font-size:12px; letter-spacing:2px; color:#2dd4bf; text-transform:uppercase; }
+  .gradientbar { height:5px; background:linear-gradient(90deg,#f5b942,#ef4444,#a855f7,#3b82f6,#2dd4bf,#22c55e); }
+  .wrap { max-width:1200px; margin:0 auto; padding:0 40px; }
+  header.hero { padding:64px 0 44px; }
+  .eyebrow { font-family:'DM Mono',monospace; font-size:12px; letter-spacing:3px; text-transform:uppercase; color:#f5b942; margin-bottom:16px; }
+  h1 { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:clamp(34px,5vw,58px); line-height:1.08; letter-spacing:-1px; }
+  h1 em { font-style:normal; color:#f5b942; }
+  .hero p.lede { max-width:760px; margin-top:20px; font-size:17px; color:#ffffff; }
+  .lede strong { color:#2dd4bf; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:18px; margin:40px 0 0; }
+  .card { background:#000000; border:1px solid rgba(255,255,255,0.18); border-top:4px solid; border-radius:12px; padding:22px 22px 20px; }
+  .card .num { font-family:'DM Mono',monospace; font-size:34px; font-weight:500; line-height:1; margin-bottom:8px; }
+  .card .lbl { font-size:13px; color:#ffffff; }
+  .card .sub { font-family:'DM Mono',monospace; font-size:11px; margin-top:8px; letter-spacing:1px; }
+  .c-gold { border-top-color:#f5b942; } .c-gold .num,.c-gold .sub { color:#f5b942; }
+  .c-teal { border-top-color:#2dd4bf; } .c-teal .num,.c-teal .sub { color:#2dd4bf; }
+  .c-green { border-top-color:#22c55e; } .c-green .num,.c-green .sub { color:#22c55e; }
+  .c-blue { border-top-color:#3b82f6; } .c-blue .num,.c-blue .sub { color:#3b82f6; }
+  .c-red { border-top-color:#ef4444; } .c-red .num,.c-red .sub { color:#ef4444; }
+  section { padding:56px 0 12px; }
+  .secnum { font-family:'DM Mono',monospace; font-size:12px; color:#f5b942; letter-spacing:3px; margin-bottom:10px; }
+  h2 { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:clamp(24px,3vw,34px); letter-spacing:-0.5px; margin-bottom:14px; }
+  .sectext { max-width:820px; font-size:15.5px; margin-bottom:28px; }
+  .sectext strong { color:#f5b942; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:26px; align-items:start; }
+  @media (max-width:900px){ .grid2 { grid-template-columns:1fr; } .wrap{padding:0 20px;} .strip{padding:18px 20px;} }
+  .panel { background:#000000; border:1px solid rgba(255,255,255,0.18); border-radius:14px; padding:26px; }
+  .panel h3 { font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:17px; margin-bottom:16px; }
+  .chartbox { position:relative; height:320px; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th { background:#000000; border-bottom:2px solid #f5b942; text-align:left; padding:12px 14px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:12.5px; letter-spacing:1px; text-transform:uppercase; }
+  td { padding:12px 14px; border-bottom:1px solid rgba(255,255,255,0.14); font-family:'DM Mono',monospace; font-size:13.5px; }
+  td.txt { font-family:'Inter',sans-serif; }
+  .pos { color:#22c55e; } .neg { color:#ef4444; } .gold { color:#f5b942; } .teal { color:#2dd4bf; } .blue { color:#3b82f6; }
+  .calc { border:1px solid #f5b942; border-radius:16px; padding:30px; background:#000000; }
+  .calc-grid { display:grid; grid-template-columns:340px 1fr; gap:34px; }
+  @media (max-width:900px){ .calc-grid { grid-template-columns:1fr; } }
+  .slider-row { margin-bottom:22px; }
+  .slider-row label { display:flex; justify-content:space-between; font-size:13px; font-weight:600; margin-bottom:8px; }
+  .slider-row label .val { font-family:'DM Mono',monospace; color:#f5b942; font-size:14px; }
+  input[type=range] { width:100%; accent-color:#f5b942; height:5px; cursor:pointer; }
+  .out-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:22px; }
+  .out { border:1px solid rgba(255,255,255,0.2); border-radius:10px; padding:14px 16px; }
+  .out .v { font-family:'DM Mono',monospace; font-size:24px; font-weight:500; }
+  .out .k { font-size:11.5px; margin-top:4px; color:#ffffff; }
+  .doctrine { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px; }
+  .doc-card { border:1px solid rgba(255,255,255,0.18); border-left:4px solid #2dd4bf; border-radius:10px; padding:20px; }
+  .doc-card h4 { font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:700; color:#2dd4bf; margin-bottom:8px; }
+  .doc-card p { font-size:13.5px; }
+  .callout { border:1px solid #22c55e; border-radius:12px; padding:22px 26px; margin-top:26px; }
+  .callout .big { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:20px; color:#22c55e; margin-bottom:6px; }
+  .warn { border:1px solid #ef4444; border-radius:12px; padding:22px 26px; margin-top:26px; }
+  .warn h4 { font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; color:#ef4444; margin-bottom:10px; font-size:16px; }
+  .warn ul { margin-left:18px; font-size:14px; }
+  .warn li { margin-bottom:8px; }
+  footer { margin-top:70px; background:#000000; border-top:1px solid rgba(255,255,255,0.15); padding:26px 40px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-family:'DM Mono',monospace; font-size:11.5px; letter-spacing:1px; color:#ffffff; }
+</style>
+</head>
+<body>
+
+<div class="strip">
+  <div class="wordmark">O<span>R</span>N</div>
+  <div class="tag">Euro Coach Tour Strategy · Van Fleet Economics · Confidential · July 2026</div>
+</div>
+<div class="gradientbar"></div>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">Mercedes V-Class · 7–8 Seater Fleet Programme</div>
+  <h1>Own the wheels.<br>Keep the <em>&euro;300 a day</em>.</h1>
+  <p class="lede">Every day an ORN-owned Mercedes V-Class replaces a market-hired vehicle at &euro;750/day, ORN keeps <strong>&euro;300</strong>. Charged internally at &euro;450/day, a &euro;65,000 van recovers its full purchase price in <strong>145 charged days</strong> — roughly eleven Wonders of Europe departures — and at just 60% annual utilisation it saves its entire purchase price <strong>every single year</strong> in avoided hire cost. This is the operating-stack doctrine from the UK Market Entry Strategy, applied to the van fleet.</p>
+
+  <div class="cards">
+    <div class="card c-gold"><div class="num">&euro;65,000</div><div class="lbl">Purchase price per Mercedes V-Class (7–8 seats)</div><div class="sub">CAPEX PER VEHICLE</div></div>
+    <div class="card c-teal"><div class="num">&euro;450<span style="font-size:16px">/day</span></div><div class="lbl">Internal fleet charge to our own tours</div><div class="sub">VS MARKET &euro;750/DAY</div></div>
+    <div class="card c-green"><div class="num">&euro;300<span style="font-size:16px">/day</span></div><div class="lbl">Saving on every operated day — a 40% cut in transport cost</div><div class="sub">&euro;3,900 PER 13-DAY TOUR</div></div>
+    <div class="card c-blue"><div class="num">145</div><div class="lbl">Charged days to fully recover the &euro;65k at &euro;450/day</div><div class="sub">≈ 11 WOE-LENGTH TOURS</div></div>
+  </div>
+</header>
+
+<!-- SECTION 1 -->
+<section>
+  <div class="secnum">01 · THE DAILY ECONOMICS</div>
+  <h2>&euro;450 in. &euro;750 out. The market pays for our fleet.</h2>
+  <p class="sectext">The market rate for a chauffeured touring van in Europe sits around <strong>&euro;750 per day</strong> — the same benchmark as the ORN Connect coach rate in the WOE 2026 costing. By owning the vehicle and charging our own tours a discounted internal rate of &euro;450/day, every tour instantly books its transport 40% cheaper, and the &euro;450 flows straight back into fleet capital recovery rather than a supplier's pocket.</p>
+  <div class="grid2">
+    <div class="panel">
+      <h3>Cost per operated day — market hire vs ORN fleet</h3>
+      <div class="chartbox"><canvas id="dayChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <h3>Where the &euro;450 internal charge goes</h3>
+      <table>
+        <tr><th>Flow</th><th>&euro;/day</th><th>Effect</th></tr>
+        <tr><td class="txt">Tour pays internal fleet rate</td><td class="teal">450</td><td class="txt">40% below market — margin or price weapon</td></tr>
+        <tr><td class="txt">Capital recovery to fleet account</td><td class="gold">450</td><td class="txt">Repays the &euro;65k vehicle</td></tr>
+        <tr><td class="txt">Avoided market premium</td><td class="pos">300</td><td class="txt">Stays inside ORN on every operated day</td></tr>
+        <tr><td class="txt">Post-payback daily position</td><td class="pos">450</td><td class="txt">Near-pure contribution (less running costs)</td></tr>
+      </table>
+      <div class="callout">
+        <div class="big">At 60% utilisation, one van saves &euro;65,700 a year.</div>
+        <div style="font-size:14px">219 operated days × &euro;300 avoided premium = the van repays its own purchase price in avoided hire cost every year — before counting the ancillary revenue it unlocks (private van upgrades, Home Connect at &pound;99–199 each way, feeders).</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2 -->
+<section>
+  <div class="secnum">02 · SAVING ON AN AVERAGE TOUR</div>
+  <h2>&euro;3,900 per tour. &euro;557 per seat.</h2>
+  <p class="sectext">Using our <strong>Wonders of Europe 2026</strong> programme (13 days) as the reference tour: market van hire costs &euro;9,750 per departure, the ORN fleet costs &euro;5,850. For a private 7-seater departure, the transport cost per passenger falls from &euro;1,393 to <strong>&euro;836</strong> — a &euro;557 per-seat advantage we can take as margin, or use to price private-van Europe at a level no incumbent can follow.</p>
+  <div class="grid2">
+    <div class="panel">
+      <h3>13-day tour: total vehicle cost per departure</h3>
+      <div class="chartbox"><canvas id="tourChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <h3>Per-passenger transport cost — private van departure</h3>
+      <table>
+        <tr><th>Configuration</th><th>Market &euro;750/d</th><th>ORN &euro;450/d</th><th>Saving/pax</th></tr>
+        <tr><td class="txt">7 guests · 13 days</td><td class="neg">&euro;1,393</td><td class="teal">&euro;836</td><td class="pos">&euro;557</td></tr>
+        <tr><td class="txt">8 guests · 13 days</td><td class="neg">&euro;1,219</td><td class="teal">&euro;731</td><td class="pos">&euro;488</td></tr>
+        <tr><td class="txt">7 guests · 7-day tour</td><td class="neg">&euro;750</td><td class="teal">&euro;450</td><td class="pos">&euro;300</td></tr>
+        <tr><td class="txt">8 guests · 7-day tour</td><td class="neg">&euro;656</td><td class="teal">&euro;394</td><td class="pos">&euro;263</td></tr>
+        <tr><td class="txt">7 guests · 9-day tour</td><td class="neg">&euro;964</td><td class="teal">&euro;579</td><td class="pos">&euro;386</td></tr>
+      </table>
+      <p style="font-size:13px; margin-top:14px;">Tour-length weighting from the UK strategy product mix (7-day core, 9-day and 12–13-day grand tours) puts the blended saving at roughly <span class="pos">&euro;300–560 per private-van passenger</span> per departure.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3 -->
+<section>
+  <div class="secnum">03 · PAYBACK CALCULATOR</div>
+  <h2>How fast does a van pay for itself?</h2>
+  <p class="sectext">Adjust the assumptions live. Payback is driven by two levers only: the <strong>internal day rate</strong> and <strong>how many days a month the van is out earning it</strong>. The running-cost slider lets you test a conservative view where fuel, insurance and maintenance are absorbed inside the &euro;450 rather than recharged to tours.</p>
+
+  <div class="calc">
+    <div class="calc-grid">
+      <div>
+        <div class="slider-row"><label>Purchase price <span class="val" id="v-price">&euro;65,000</span></label><input type="range" id="s-price" min="50000" max="90000" step="1000" value="65000"></div>
+        <div class="slider-row"><label>Internal day rate <span class="val" id="v-rate">&euro;450</span></label><input type="range" id="s-rate" min="350" max="650" step="10" value="450"></div>
+        <div class="slider-row"><label>Market day rate <span class="val" id="v-market">&euro;750</span></label><input type="range" id="s-market" min="600" max="900" step="10" value="750"></div>
+        <div class="slider-row"><label>Running cost absorbed / day <span class="val" id="v-run">&euro;0</span></label><input type="range" id="s-run" min="0" max="200" step="5" value="0"></div>
+        <div class="slider-row"><label>Utilisation — charged days / month <span class="val" id="v-days">12</span></label><input type="range" id="s-days" min="6" max="28" step="1" value="12"></div>
+        <p style="font-size:12px; color:#2dd4bf; font-family:'DM Mono',monospace;">12 days/month ≈ 40% utilisation ≈ one 13-day tour a month</p>
+      </div>
+      <div>
+        <div class="out-grid">
+          <div class="out" style="border-color:#f5b942"><div class="v gold" id="o-days">145</div><div class="k">charged days to payback</div></div>
+          <div class="out" style="border-color:#3b82f6"><div class="v blue" id="o-months">12.0</div><div class="k">calendar months at this utilisation</div></div>
+          <div class="out" style="border-color:#2dd4bf"><div class="v teal" id="o-tours">11.1</div><div class="k">13-day tours to payback</div></div>
+          <div class="out" style="border-color:#22c55e"><div class="v pos" id="o-annual">&euro;43,200</div><div class="k">avoided hire premium / year vs market</div></div>
+          <div class="out" style="border-color:#f5b942"><div class="v gold" id="o-u6">79%</div><div class="k">utilisation needed for 6-month payback</div></div>
+          <div class="out" style="border-color:#f5b942"><div class="v gold" id="o-u12">40%</div><div class="k">utilisation needed for 12-month payback</div></div>
+        </div>
+        <div class="chartbox" style="height:300px"><canvas id="paybackChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4 -->
+<section>
+  <div class="secnum">04 · OPTIMUM USAGE TARGETS</div>
+  <h2>The 6-month and 12-month answer.</h2>
+  <p class="sectext">At the &euro;450/day internal charge, the van needs <strong>145 charged days</strong>. The question is how quickly the programme can generate them.</p>
+  <div class="grid2">
+    <div class="panel" style="border-color:#ef4444">
+      <h3 style="color:#ef4444">Pay off in 6 months — aggressive</h3>
+      <table>
+        <tr><td class="txt">Charged days required</td><td>145 in 182 days</td></tr>
+        <tr><td class="txt">Utilisation</td><td class="neg">79%</td></tr>
+        <tr><td class="txt">Days per month</td><td class="neg">24.1</td></tr>
+        <tr><td class="txt">Tour equivalent</td><td class="neg">~1.9 × 13-day tours / month</td></tr>
+        <tr><td class="txt">Verdict</td><td class="txt">Back-to-back departures with near-zero turnaround. Only realistic across a peak May–October window, not year-round. Treat as the peak-season ceiling, not the plan.</td></tr>
+      </table>
+    </div>
+    <div class="panel" style="border-color:#22c55e">
+      <h3 style="color:#22c55e">Pay off in 12 months — the operating target</h3>
+      <table>
+        <tr><td class="txt">Charged days required</td><td>145 in 365 days</td></tr>
+        <tr><td class="txt">Utilisation</td><td class="pos">40%</td></tr>
+        <tr><td class="txt">Days per month</td><td class="pos">12.1</td></tr>
+        <tr><td class="txt">Tour equivalent</td><td class="pos">~1 × 13-day tour / month</td></tr>
+        <tr><td class="txt">Verdict</td><td class="txt">One private-van departure a month, or an equivalent mix of Home Connect, feeders and premium transfers. Comfortably achievable with seasonal peaks covering winter dips. This should be the approved case.</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:26px">
+    <h3>Utilisation scenarios — payback and annual value per van</h3>
+    <table>
+      <tr><th>Utilisation</th><th>Days / year</th><th>Payback at &euro;450/day</th><th>Avoided premium / yr (&euro;300/day)</th><th>Reading</th></tr>
+      <tr><td>30%</td><td>110</td><td>15.9 months</td><td class="pos">&euro;33,000</td><td class="txt">Below target — acceptable only in launch year</td></tr>
+      <tr><td class="gold">40%</td><td class="gold">146</td><td class="gold">12.0 months</td><td class="pos">&euro;43,800</td><td class="txt gold">Operating target — 1-year payback</td></tr>
+      <tr><td>50%</td><td>183</td><td>9.6 months</td><td class="pos">&euro;54,900</td><td class="txt">Strong season with feeder work in shoulder months</td></tr>
+      <tr><td class="teal">60%</td><td class="teal">219</td><td class="teal">8.0 months</td><td class="pos">&euro;65,700</td><td class="txt teal">Van saves its own purchase price every year</td></tr>
+      <tr><td>79%</td><td>289</td><td>6.0 months*</td><td class="pos">&euro;86,700</td><td class="txt">*6-month payback pace — peak-window ceiling</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- SECTION 5 -->
+<section>
+  <div class="secnum">05 · WHAT WE NEED TO SELL</div>
+  <h2>78 seats pays for a van.</h2>
+  <p class="sectext">In sales terms, one &euro;65,000 vehicle is fully amortised by <strong>~11 private-van departures of 13 days at 7 guests — roughly 78 booked seats</strong>. Every seat sold after that rides on a paid-for asset. Scaling to the 60–80 van pool in the UK Market Entry Strategy:</p>
+  <div class="panel">
+    <table>
+      <tr><th>Fleet size</th><th>Capital</th><th>Charged days / yr @ 40%</th><th>13-day tour capacity / yr</th><th>Seats / yr @ 7 pax</th><th>Avoided premium / yr</th></tr>
+      <tr><td>5 vans</td><td>&euro;325,000</td><td>730</td><td>56</td><td>392</td><td class="pos">&euro;219,000</td></tr>
+      <tr><td>10 vans</td><td>&euro;650,000</td><td>1,460</td><td>112</td><td>784</td><td class="pos">&euro;438,000</td></tr>
+      <tr><td>20 vans</td><td>&euro;1,300,000</td><td>2,920</td><td>224</td><td>1,568</td><td class="pos">&euro;876,000</td></tr>
+      <tr><td class="gold">60 vans (strategy floor)</td><td class="gold">&euro;3,900,000</td><td>8,760</td><td>673</td><td>4,712</td><td class="pos">&euro;2,628,000</td></tr>
+    </table>
+    <p style="font-size:13px; margin-top:14px;">At the strategy-floor fleet of 60 vans and only 40% utilisation, the avoided hire premium alone is <span class="pos">&euro;2.6m a year</span> — before the vans also carry Home Connect (&pound;39–199 each way), airport arrivals, small-group premium touring and the &euro;40k-credit private van upgrade sold through Europe Access.</p>
+  </div>
+</section>
+
+<!-- SECTION 6 -->
+<section>
+  <div class="secnum">06 · MARKET COMPETITIVENESS</div>
+  <h2>Already cheaper at &euro;750/day. Untouchable at &euro;450.</h2>
+  <p class="sectext">The WOE 2026 comparison shows ORN self-operation already beats Europe Incoming by <strong>~&euro;243–251 per passenger</strong> across every pax slab, even with transport benchmarked at the full &euro;750/day market rate. Move transport onto owned fleet at &euro;450/day and the per-day gap of &euro;300 flows directly into that advantage — either widening margin or funding the &pound;499-style entry fares in the UK strategy that force incumbents into the pricing trap.</p>
+  <div class="grid2">
+    <div class="panel">
+      <h3>WOE 2026 — cost per passenger by group size (all-in, incl. TM + driver)</h3>
+      <div class="chartbox"><canvas id="compChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <h3>The competitive stack</h3>
+      <table>
+        <tr><th>Benchmark @ 40 pax</th><th>&euro;/pp</th></tr>
+        <tr><td class="txt">Europe Incoming + ORN Connect @ &euro;750/day + TM</td><td class="neg">1,974</td></tr>
+        <tr><td class="txt">ORN self-operated, all gaps closed, coach @ &euro;750/day</td><td class="teal">1,886</td></tr>
+        <tr><td class="txt">ORN self-operated, own fleet @ &euro;450/day equivalent</td><td class="pos">1,789</td></tr>
+        <tr><td class="txt gold">Advantage vs outsourced ground handling</td><td class="pos gold">&euro;185/pp</td></tr>
+      </table>
+      <p style="font-size:13px; margin-top:14px;">The same logic scales down to the van: on a private 7-seat departure the transport line drops by <span class="pos">&euro;557/pp</span> — a structural advantage no quote-led incumbent can match, because <span class="gold">they hire what we own</span>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 7 -->
+<section>
+  <div class="secnum">07 · WHY OWN FLEET</div>
+  <h2>They can copy an ad. Not the operating stack.</h2>
+  <p class="sectext">From both strategy documents, the van fleet is not a cost line — it is a distribution, product and margin asset:</p>
+  <div class="doctrine">
+    <div class="doc-card"><h4>Margin from every component</h4><p>Incumbents buy coach capacity departure by departure. ORN earns the tour, the coach, the van, the hotel, the transfer and the excursion on the same passenger.</p></div>
+    <div class="doc-card"><h4>Premium product engine</h4><p>The 7–8 seat V-Class is the vehicle behind ORN Signature, private van upgrades (&euro;40k credit in Europe Access) and small-group premium touring — parity-or-above pricing on a &euro;450/day cost base.</p></div>
+    <div class="doc-card"><h4>Ancillary revenue machine</h4><p>Home Connect at &pound;39–199 each way, airport and rail arrivals, regional feeders at &pound;20–35 — all high-margin inventory that only exists because the van does.</p></div>
+    <div class="doc-card"><h4>Pricing weapon</h4><p>The &euro;300/day advantage funds entry-bucket fares incumbents cannot follow: if they cut price, their externally purchased cost base compresses their margin, not ours.</p></div>
+    <div class="doc-card"><h4>Network resilience</h4><p>The strategy calls for 60–80 vans covering feeders, arrivals, premium touring and 8–10 vehicles of disruption reserve. Owned fleet turns disruption from a supplier negotiation into a dispatch decision.</p></div>
+    <div class="doc-card"><h4>Trust and brand control</h4><p>"ORN coaches. ORN people. ORN ground." The vehicle is the most visible proof of the one-operator promise sold across Europe Access and the UK entry campaign.</p></div>
+  </div>
+</section>
+
+<!-- SECTION 8 -->
+<section>
+  <div class="secnum">08 · GUARDRAILS</div>
+  <h2>Before the board signs.</h2>
+  <div class="warn">
+    <h4>Assumptions to lock down</h4>
+    <ul>
+      <li><strong>What the &euro;450/day covers.</strong> The payback above treats &euro;450 as pure capital recovery. If fuel, insurance, maintenance, tolls and depreciation come out of it (typically &euro;80–150/day for a V-Class, excluding driver), use the running-cost slider — at &euro;120/day absorbed, payback stretches from 145 to ~197 charged days.</li>
+      <li><strong>Drivers are a separate line.</strong> Employed vs freelance driver cost sits outside both the &euro;450 and &euro;750 figures and must be added to any per-tour costing — consistent with the WOE model where driver meals and accommodation are itemised separately.</li>
+      <li><strong>Seasonality.</strong> The 40% annual utilisation target must be built from the monthly ramp (peak May–October, Christmas markets), not assumed flat. Winter feeder and airport work protects the average.</li>
+      <li><strong>Contribution floors.</strong> Per the yield doctrine, no private-van departure sells below its approved minimum contribution after variable costs — the &euro;450 rate is an internal transfer price, not a licence to discount the retail fare.</li>
+      <li><strong>Residual value upside.</strong> Payback here assumes the van is worth zero at the end — in reality a 2–3 year old V-Class retains meaningful resale value, so true economics are better than shown.</li>
+    </ul>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <div>ORN GROUP · EURO COACH TOUR STRATEGY · VAN FLEET ECONOMICS</div>
+  <div>SOURCES: WOE 2026 COSTING · UK MARKET ENTRY STRATEGY · EUROPE ACCESS PROGRAMME · PREPARED FOR LEADERSHIP · CONFIDENTIAL</div>
+</footer>
+
+<script>
+Chart.defaults.color = "#ffffff";
+Chart.defaults.font.family = "'DM Mono', monospace";
+Chart.defaults.borderColor = "rgba(255,255,255,0.15)";
+
+// Chart 1: per-day comparison
+new Chart(document.getElementById("dayChart"), {
+  type: "bar",
+  data: {
+    labels: ["Market hire", "ORN internal rate", "Daily saving"],
+    datasets: [{
+      data: [750, 450, 300],
+      backgroundColor: ["#ef4444", "#2dd4bf", "#22c55e"],
+      borderRadius: 8
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c){ return "\u20AC" + c.parsed.y + " per day"; } } } },
+    scales: { y: { beginAtZero: true, ticks: { callback: function(v){ return "\u20AC" + v; } } } }
+  }
+});
+
+// Chart 2: per-tour comparison
+new Chart(document.getElementById("tourChart"), {
+  type: "bar",
+  data: {
+    labels: ["Market \u20AC750/day", "ORN fleet \u20AC450/day"],
+    datasets: [
+      { label: "Vehicle cost per 13-day departure", data: [9750, 5850], backgroundColor: ["#ef4444", "#2dd4bf"], borderRadius: 8 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: function(c){ return "\u20AC" + c.parsed.y.toLocaleString() + " per departure"; } } }
+    },
+    scales: { y: { beginAtZero: true, ticks: { callback: function(v){ return "\u20AC" + v.toLocaleString(); } } } }
+  }
+});
+
+// Chart 3: WOE competitiveness by pax slab
+new Chart(document.getElementById("compChart"), {
+  type: "bar",
+  data: {
+    labels: ["20\u201324", "25\u201329", "30\u201334", "35\u201339", "40\u201344", "45\u201349"],
+    datasets: [
+      { label: "ORN self-op (incl. coach)", data: [2063, 1919, 1824, 1755, 1704, 1663], backgroundColor: "#2dd4bf", borderRadius: 6 },
+      { label: "EI + TM/driver + coach \u20AC750/d", data: [2307, 2170, 2074, 2000, 1947, 1905], backgroundColor: "#ef4444", borderRadius: 6 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: "bottom" },
+      tooltip: { callbacks: { label: function(c){ return c.dataset.label + ": \u20AC" + c.parsed.y.toLocaleString() + "/pp"; } } }
+    },
+    scales: { x: { title: { display: true, text: "Group size (pax)" } }, y: { ticks: { callback: function(v){ return "\u20AC" + v.toLocaleString(); } } } }
+  }
+});
+
+// Payback calculator
+var paybackChart = new Chart(document.getElementById("paybackChart"), {
+  type: "line",
+  data: { labels: [], datasets: [
+    { label: "Cumulative recovery", data: [], borderColor: "#f5b942", backgroundColor: "rgba(245,185,66,0.12)", fill: true, tension: 0.25, pointRadius: 0, borderWidth: 3 },
+    { label: "Purchase price", data: [], borderColor: "#ef4444", borderDash: [7,6], pointRadius: 0, borderWidth: 2, fill: false }
+  ]},
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: "bottom" },
+      tooltip: { callbacks: { label: function(c){ return c.dataset.label + ": \u20AC" + Math.round(c.parsed.y).toLocaleString(); } } }
+    },
+    scales: {
+      x: { title: { display: true, text: "Months" } },
+      y: { beginAtZero: true, ticks: { callback: function(v){ return "\u20AC" + (v/1000) + "k"; } } }
+    }
+  }
+});
+
+function fmt(n){ return "\u20AC" + Math.round(n).toLocaleString(); }
+
+function recalc(){
+  var price = +document.getElementById("s-price").value;
+  var rate = +document.getElementById("s-rate").value;
+  var market = +document.getElementById("s-market").value;
+  var run = +document.getElementById("s-run").value;
+  var dpm = +document.getElementById("s-days").value;
+
+  document.getElementById("v-price").textContent = fmt(price);
+  document.getElementById("v-rate").textContent = fmt(rate);
+  document.getElementById("v-market").textContent = fmt(market);
+  document.getElementById("v-run").textContent = fmt(run);
+  document.getElementById("v-days").textContent = dpm;
+
+  var net = Math.max(rate - run, 1);
+  var pbDays = price / net;
+  var pbMonths = pbDays / dpm;
+  var tours = pbDays / 13;
+  var annual = dpm * 12 * Math.max(market - rate, 0);
+  var u6 = pbDays / 182.5 * 100;
+  var u12 = pbDays / 365 * 100;
+
+  document.getElementById("o-days").textContent = Math.ceil(pbDays);
+  document.getElementById("o-months").textContent = pbMonths.toFixed(1);
+  document.getElementById("o-tours").textContent = tours.toFixed(1);
+  document.getElementById("o-annual").textContent = fmt(annual);
+  document.getElementById("o-u6").textContent = (u6 > 100 ? ">100" : Math.round(u6)) + "%";
+  document.getElementById("o-u12").textContent = (u12 > 100 ? ">100" : Math.round(u12)) + "%";
+
+  var horizon = Math.min(Math.max(Math.ceil(pbMonths * 1.5), 12), 36);
+  var labels = [], cum = [], line = [];
+  for (var m = 0; m <= horizon; m++){
+    labels.push(m);
+    cum.push(m * dpm * net);
+    line.push(price);
+  }
+  paybackChart.data.labels = labels;
+  paybackChart.data.datasets[0].data = cum;
+  paybackChart.data.datasets[1].data = line;
+  paybackChart.update();
+}
+
+["s-price","s-rate","s-market","s-run","s-days"].forEach(function(id){
+  document.getElementById(id).addEventListener("input", recalc);
+});
+recalc();
+</script>
+</body>
+</html>
